@@ -12,9 +12,11 @@
                 $producto = new Producto($_POST);
                 if($tipo ==  1){
                     $resultado = $producto->guardar();
+                    $mensaje = "Guardado correctamente";
                 }
                 if($tipo == 2){
-                    echo json_encode("modificando");
+                    $resultado = $producto->modificar();
+                    $mensaje = "Modificado correctamente";
     
                 }
                 if($tipo == 3){
@@ -24,7 +26,7 @@
 
                 if($resultado){
                     echo json_encode([
-                        "mensaje" => "Guardado correctamente",
+                        "mensaje" => $mensaje,
                         "codigo" => 1,
                     ]);
     

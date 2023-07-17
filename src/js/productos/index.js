@@ -1,19 +1,22 @@
 const formulario = document.querySelector('form')
-const alerta = document.querySelector('#alert')
+const btnGuardar = document.querySelector('#btnGuardar');
 const btnBuscar = document.querySelector('#btnBuscar');
+const btnModificar = document.querySelector('#btnModificar');
+const btnCancelar = document.querySelector('#btnCancelar');
+const btnLimpiar = document.querySelector('#btnLimpiar');
 const tablaProductos = document.querySelector('#tablaProductos');
 
-alerta.style.display = 'none'
+btnModificar.parentElement.style.display = 'none'
+btnModificar.disabled = true;
+btnCancelar.parentElement.style.display = 'none'
+btnCancelar.disabled = true;
 
 const guardar = async (e) => {
     e.preventDefault();
 
 
     if(validarFormulario(formulario, ['producto_id'])){
-        alerta.classList.remove('alert-warning')
-        alerta.textContent = ''
-        alerta.style.display = 'none'
-
+        
         const formData = new FormData(formulario);
         formData.append('tipo', 1)
         formData.delete('producto_id')
@@ -28,19 +31,22 @@ const guardar = async (e) => {
             const data = await respuesta.json();  
             
             const {codigo, mensaje,detalle} = data;
+            alert(mensaje)
 
             switch (codigo) {
                 case 1:
-                    alerta.classList.add('alert-success')
                     formulario.reset();
                     buscar()
+                    break;
+                case 0:
+                    console.log(detalle)
+
                     break;
             
                 default:
                     break;
             }
-            alerta.textContent = mensaje
-            alerta.style.display = ''
+
            
         } catch (error) {
             console.log(error)
@@ -48,9 +54,8 @@ const guardar = async (e) => {
         
 
     }else{
-        alerta.classList.add('alert-warning')
-        alerta.textContent = 'Debe llenar todos los datos'
-        alerta.style.display = ''
+        alert('Debe llenar todos los datos')
+        
         return;
 
     }
@@ -58,7 +63,9 @@ const guardar = async (e) => {
 
 const buscar = async e => {
     e && e.preventDefault();
-    const url = `/crudJS/controllers/productos/index.php`
+    let nombre = formulario.producto_nombre.value
+    let precio = formulario.producto_precio.value
+    const url = `/crudJS/controllers/productos/index.php?producto_nombre=${nombre}&producto_precio=${precio}`
     const config = {
         method : 'GET'
     }
@@ -115,11 +122,103 @@ const buscar = async e => {
 }
 
 const llenarDatos = (producto) => {
+   
+    removerValidaciones(formulario);
     formulario.producto_id.value = producto.PRODUCTO_ID
     formulario.producto_nombre.value = producto.PRODUCTO_NOMBRE
     formulario.producto_precio.value = producto.PRODUCTO_PRECIO
+    
+    tablaProductos.parentElement.parentElement.style.display = 'none'
+    btnGuardar.parentElement.style.display = 'none'
+    btnGuardar.disabled = true;
+    btnBuscar.parentElement.style.display = 'none'
+    btnBuscar.disabled = true;
+    btnLimpiar.parentElement.style.display = 'none'
+    btnLimpiar.disabled = true;
+
+    btnModificar.parentElement.style.display = ''
+    btnModificar.disabled = false;
+    btnCancelar.parentElement.style.display = ''
+    btnCancelar.disabled = false;
+}
+
+const limpiar = (e) => {
+    e.preventDefault()
+    removerValidaciones(formulario);
+    formulario.reset();
+}
+
+const cancelar = () => {
+
+    formulario.reset();
+    removerValidaciones(formulario);
+    tablaProductos.parentElement.parentElement.style.display = ''
+    btnGuardar.parentElement.style.display = ''
+    btnGuardar.disabled = false;
+    btnBuscar.parentElement.style.display = ''
+    btnBuscar.disabled = false;
+    btnLimpiar.parentElement.style.display = ''
+    btnLimpiar.disabled = false;
+
+    btnModificar.parentElement.style.display = 'none'
+    btnModificar.disabled = true;
+    btnCancelar.parentElement.style.display = 'none'
+    btnCancelar.disabled = true;
+}
+
+const modificar = async (e) => {
+    e.preventDefault();
+
+
+    if(validarFormulario(formulario)){
+        
+        const formData = new FormData(formulario);
+        formData.append('tipo', 2)
+        const url = `/crudJS/controllers/productos/index.php`
+        const config = {
+            method : 'POST',
+            body: formData
+        }
+        try {
+           
+            const respuesta = await fetch(url, config);  
+            const data = await respuesta.json();  
+            
+            const {codigo, mensaje,detalle} = data;
+            alert(mensaje)
+
+            switch (codigo) {
+                case 1:
+                    formulario.reset();
+                    buscar()
+                    cancelar();
+                    break;
+                case 0:
+                    console.log(detalle)
+
+                    break;
+            
+                default:
+                    break;
+            }
+
+           
+        } catch (error) {
+            console.log(error)
+        }
+        
+
+    }else{
+        alert('Debe llenar todos los datos')
+        
+        return;
+
+    }
 }
 
 buscar();
 formulario.addEventListener('submit', guardar )
 btnBuscar.addEventListener('click', buscar)
+btnCancelar.addEventListener('click', cancelar)
+btnLimpiar.addEventListener('click', limpiar)
+btnModificar.addEventListener('click', modificar)

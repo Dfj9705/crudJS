@@ -15,3 +15,12 @@ const validarFormulario = (formulario, excepciones = [] ) => {
 
     return !noenviar;
 }
+
+const removerValidaciones = formulario => {
+    const elements = formulario.querySelectorAll("input, select, textarea");
+    elements.forEach( element => {
+
+        element.classList.remove('is-invalid');
+        
+    });
+}
