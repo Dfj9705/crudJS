@@ -8,13 +8,13 @@
             <div class="row mb-3">
                 <div class="col">
                     <label for="producto_nombre">Nombre del producto</label>
-                    <input type="text" name="producto_nombre" id="producto_nombre" class="form-control">
+                    <input type="text" name="producto_nombre" id="producto_nombre" class="form-control" required>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
                     <label for="producto_precio">Precio del producto</label>
-                    <input type="number" step="0.01" min="0" name="producto_precio" id="producto_precio" class="form-control">
+                    <input type="number" step="0.01" min="0" name="producto_precio" id="producto_precio" class="form-control" required>
                 </div>
             </div>
             <div class="row justify-content-center mb-3">
