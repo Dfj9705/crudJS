@@ -88,13 +88,14 @@ const buscar = async e => {
                 const btnModificar = document.createElement('button')
                 const btnEliminar = document.createElement('button')
 
-                btnModificar.addEventListener('click', () => llenarDatos(producto) )
-
+                
                 btnModificar.classList.add('btn', 'btn-warning')
                 btnModificar.innerText = 'Modificar'
+                btnModificar.addEventListener('click', () => llenarDatos(producto) )
                 btnEliminar.innerText = 'Eliminar'
                 btnEliminar.classList.add('btn', 'btn-danger')
-
+                btnEliminar.addEventListener('click', () => eliminar(producto.PRODUCTO_ID) )
+                
                 tdNo.textContent = contador++
                 tdNombre.textContent = producto.PRODUCTO_NOMBRE
                 tdPrecio.textContent = producto.PRODUCTO_PRECIO
@@ -212,6 +213,48 @@ const modificar = async (e) => {
         alert('Debe llenar todos los datos')
         
         return;
+
+    }
+}
+
+const eliminar = async (id) => {
+
+    if(confirm('¿Esta seguro que desea eliminarlo?')){
+        
+        const formData = new FormData();
+        formData.append('tipo', 3)
+        formData.append('producto_id', id)
+        const url = `/crudJS/controllers/productos/index.php`
+        const config = {
+            method : 'POST',
+            body: formData
+        }
+        try {
+           
+            const respuesta = await fetch(url, config);  
+            const data = await respuesta.json();  
+            
+            const {codigo, mensaje,detalle} = data;
+            alert(mensaje)
+
+            switch (codigo) {
+                case 1:
+                    buscar()
+                    break;
+                case 0:
+                    console.log(detalle)
+
+                    break;
+            
+                default:
+                    break;
+            }
+
+           
+        } catch (error) {
+            console.log(error)
+        }
+        
 
     }
 }

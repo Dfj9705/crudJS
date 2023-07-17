@@ -20,7 +20,8 @@
     
                 }
                 if($tipo == 3){
-                    echo json_encode("eliminando");
+                    $resultado = $producto->eliminar();
+                    $mensaje = "Eliminado correctamente";
     
                 }
 
